@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Param, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Put} from '@nestjs/common';
 import {ChangeUserDto} from "./dto/change-user.dto";
 import {UserService} from "./user.service";
 import {UserDocument} from "./user.schema";
@@ -8,6 +8,11 @@ export class UserController {
   constructor(
     private userService: UserService
   ) {
+  }
+
+  @Get("/all")
+  getAllUsers(): Promise<UserDocument[]> {
+    return this.userService.getAllUsers()
   }
 
   @Put(':id')

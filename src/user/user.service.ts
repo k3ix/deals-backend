@@ -4,11 +4,15 @@ import {User, UserDocument} from "./user.schema";
 import {Model} from "mongoose";
 import {RegistrationDto} from "../auth/dto/registration.dto";
 import {ChangeUserDto} from "./dto/change-user.dto";
+import {Friends, FriendsDocument} from "./friends.schema";
 
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userRepository: Model<UserDocument> ) {}
+  constructor(
+    @InjectModel(User.name) private userRepository: Model<UserDocument>,
+    @InjectModel(Friends.name) private friendsRepository: Model<FriendsDocument>
+  ) {}
 
   async getAllUsers(): Promise<UserDocument[]> {
     return await this.userRepository.find().exec()
@@ -33,5 +37,14 @@ export class UserService {
 
   async getUserByUsername(username: string): Promise<UserDocument> {
     return await this.userRepository.findOne({username: username}).exec()
+  }
+
+  async addFriend(userId: string, friendId: string): Promise<FriendsDocument> {
+    const friends = new this.friendsRepository({friend1: userId, friend2: friendId})
+    return friends.save()
+  }
+
+  async getUserFriends(id: string): Promise<FriendsDocument[]> {
+    return await this.friendsRepository.find({friend1: id}).exec()
   }
 }
